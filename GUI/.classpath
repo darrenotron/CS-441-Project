@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.osgi_3.18.100.v20220817-1601.jar" sourcepath="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.osgi_3.18.100.v20220817-1601.jar"/>
 	<classpathentry kind="lib" path="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.core.commands_3.10.200.v20220512-0851.jar" sourcepath="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.core.commands_3.10.200.v20220512-0851.jar"/>
 	<classpathentry kind="lib" path="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.equinox.common_3.16.200.v20220817-1601.jar" sourcepath="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.equinox.common_3.16.200.v20220817-1601.jar"/>
@@ -18,6 +14,5 @@
 	<classpathentry kind="lib" path="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.ui.workbench_3.126.0.v20220823-0718.jar" sourcepath="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.ui.workbench_3.126.0.v20220823-0718.jar"/>
 	<classpathentry kind="lib" path="C:/Users/dtran/Desktop/eclipse/plugins/com.ibm.icu_67.1.0.jar" sourcepath="C:/Users/dtran/Desktop/eclipse/plugins/com.ibm.icu_67.1.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.ui.forms_3.11.400.v20220817-1444.jar" sourcepath="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.ui.forms_3.11.400.v20220817-1444.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
