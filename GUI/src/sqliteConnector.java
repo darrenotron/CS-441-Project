@@ -6,7 +6,8 @@ public class sqliteConnector {
 	public static Connection dbConnector()
 	{
 		try {
-			Connection conn = DriverManager.getConnection("jdbc:sqlite:‪Inventory.db");
+			Class.forName("org.sqlite.JDBC");
+			Connection conn = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\dtran\\441 Prj\\Inventory.sqlite");
 			//JOptionPane.showMessageDialog(null, "Database Connected");
 			return conn;
 			

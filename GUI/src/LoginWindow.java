@@ -1,5 +1,5 @@
 import java.awt.EventQueue;
-import java.sql.*;
+
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -11,7 +11,7 @@ import javax.swing.JPasswordField;
 
 public class LoginWindow {
 
-	Connection connection = null;
+	
 	private JFrame frame;
 	private JTextField EmpID;
 	private JPasswordField passwordField;
@@ -40,7 +40,7 @@ public class LoginWindow {
 	 */
 	public LoginWindow() {
 		initialize();
-		connection = sqliteConnector.dbConnector();
+
 	}
 
 	/**
