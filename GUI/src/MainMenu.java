@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
+import java.awt.Color;
 
 public class MainMenu extends JFrame {
 
@@ -25,7 +26,6 @@ public class MainMenu extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTable table;
 
 	/**
 	 * Launch the application.
@@ -44,6 +44,7 @@ public class MainMenu extends JFrame {
 	}
 	
 Connection connection = null;
+private JTable InvTable;
 
 	/**
 	 * Create the frame.
@@ -64,8 +65,13 @@ Connection connection = null;
 		layeredPane.setLayout(new CardLayout(0, 0));
 		
 		JPanel ViewInvPanel = new JPanel();
+		layeredPane.setLayer(ViewInvPanel, -1);
 		layeredPane.add(ViewInvPanel, "name_1659376283470600");
 		ViewInvPanel.setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(553, 188, -449, -183);
+		ViewInvPanel.add(scrollPane);
 		
 		JButton RefreshButton = new JButton("Refresh");
 		RefreshButton.addActionListener(new ActionListener() {
@@ -74,7 +80,8 @@ Connection connection = null;
 					String query = "select * from Inv";
 					PreparedStatement pst = connection.prepareStatement(query);
 					ResultSet rs = pst.executeQuery();
-					table.setModel(DbUtils.resultSetToTableModel(rs));
+					InvTable.setModel(DbUtils.resultSetToTableModel(rs));
+
 					
 				}catch (Exception e1) {
 					e1.printStackTrace();
@@ -84,12 +91,10 @@ Connection connection = null;
 		RefreshButton.setBounds(0, 0, 89, 23);
 		ViewInvPanel.add(RefreshButton);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(553, 188, -449, -183);
-		ViewInvPanel.add(scrollPane);
+		InvTable = new JTable();
+		InvTable.setBounds(99, 22, 518, 198);
+		ViewInvPanel.add(InvTable);
 		
-		table = new JTable();
-		scrollPane.setViewportView(table);
 		
 		JPanel AddItemPanel = new JPanel();
 		layeredPane.add(AddItemPanel, "name_1659379628347400");
