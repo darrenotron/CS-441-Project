@@ -6,6 +6,8 @@ import javax.swing.border.EmptyBorder;
 import net.proteanit.sql.DbUtils;
 
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
+
 import java.awt.CardLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -17,6 +19,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.Color;
+import javax.swing.JTextField;
+import java.awt.GridLayout;
+import javax.swing.SwingConstants;
 
 public class MainMenu extends JFrame {
 
@@ -45,6 +50,12 @@ public class MainMenu extends JFrame {
 	
 Connection connection = null;
 private JTable InvTable;
+private JTextField IDNum;
+private JTextField ItemName;
+private JTextField Quant;
+private JTextField Price;
+private JTextField Date;
+private JTextField IDtoRemove;
 
 	/**
 	 * Create the frame.
@@ -70,7 +81,7 @@ private JTable InvTable;
 		ViewInvPanel.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(553, 188, -449, -183);
+		scrollPane.setBounds(614, 219, -510, -196);
 		ViewInvPanel.add(scrollPane);
 		
 		JButton RefreshButton = new JButton("Refresh");
@@ -98,15 +109,114 @@ private JTable InvTable;
 		
 		JPanel AddItemPanel = new JPanel();
 		layeredPane.add(AddItemPanel, "name_1659379628347400");
+		AddItemPanel.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Add Item Placeholder");
+		JLabel lblNewLabel = new JLabel("ID Number");
+		lblNewLabel.setForeground(new Color(0, 0, 0));
+		lblNewLabel.setBackground(new Color(255, 255, 255));
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setBounds(0, 0, 79, 28);
 		AddItemPanel.add(lblNewLabel);
+		
+		JLabel lblNewLabel_2 = new JLabel("Item Name");
+		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_2.setBounds(99, 0, 79, 28);
+		AddItemPanel.add(lblNewLabel_2);
+		
+		JLabel lblNewLabel_3 = new JLabel("Quantity");
+		lblNewLabel_3.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_3.setBounds(195, 0, 79, 28);
+		AddItemPanel.add(lblNewLabel_3);
+		
+		JLabel lblNewLabel_4 = new JLabel("Price");
+		lblNewLabel_4.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_4.setBounds(291, 0, 79, 28);
+		AddItemPanel.add(lblNewLabel_4);
+		
+		JLabel lblNewLabel_5 = new JLabel("Date Added");
+		lblNewLabel_5.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_5.setBounds(387, 0, 79, 28);
+		AddItemPanel.add(lblNewLabel_5);
+		
+		IDNum = new JTextField();
+		IDNum.setHorizontalAlignment(SwingConstants.LEFT);
+		IDNum.setBounds(0, 39, 86, 20);
+		AddItemPanel.add(IDNum);
+		IDNum.setColumns(10);
+		
+		ItemName = new JTextField();
+		ItemName.setBounds(99, 39, 86, 20);
+		AddItemPanel.add(ItemName);
+		ItemName.setColumns(10);
+		
+		Quant = new JTextField();
+		Quant.setBounds(195, 39, 86, 20);
+		AddItemPanel.add(Quant);
+		Quant.setColumns(10);
+		
+		Price = new JTextField();
+		Price.setBounds(291, 39, 86, 20);
+		AddItemPanel.add(Price);
+		Price.setColumns(10);
+		
+		Date = new JTextField();
+		Date.setBounds(387, 39, 86, 20);
+		AddItemPanel.add(Date);
+		Date.setColumns(10);
+		
+		JButton btnNewButton = new JButton("Add Item");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String query = "Insert into Inv (IDNumber,ItemName, Quantity, Price, DateAdded) values (?, ?, ?, ?, ?)";
+					PreparedStatement pst = connection.prepareStatement(query);
+					pst.setString(1, IDNum.getText());
+					pst.setString(2, ItemName.getText());
+					pst.setString(3, Quant.getText());
+					pst.setString(4, Price.getText());
+					pst.setString(5, Date.getText());
+					pst.execute();	
+					JOptionPane.showMessageDialog(null, "Entry Added");
+				}catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				
+			}
+		});
+		btnNewButton.setBounds(483, 39, 89, 20);
+		AddItemPanel.add(btnNewButton);
 		
 		JPanel RemoveItemPanel = new JPanel();
 		layeredPane.add(RemoveItemPanel, "name_1659386861033000");
+		RemoveItemPanel.setLayout(null);
 		
-		JLabel lblNewLabel_1 = new JLabel("Remove Item Placeholder");
+		JLabel lblNewLabel_1 = new JLabel("ID Number");
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1.setBounds(0, 0, 79, 28);
 		RemoveItemPanel.add(lblNewLabel_1);
+		
+		IDtoRemove = new JTextField();
+		IDtoRemove.setBounds(0, 39, 86, 20);
+		RemoveItemPanel.add(IDtoRemove);
+		IDtoRemove.setColumns(10);
+		
+		JButton btnNewButton_1 = new JButton("Remove");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String query = "delete from Inv where IDNumber= '"+IDtoRemove.getText()+"' ";
+					PreparedStatement pst = connection.prepareStatement(query);
+					
+					
+					pst.execute();
+					JOptionPane.showMessageDialog(null, "Entry Deleted");
+				}catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnNewButton_1.setBounds(96, 38, 89, 23);
+		RemoveItemPanel.add(btnNewButton_1);
 		
 		JButton ViewButton = new JButton("View Inventory");
 		ViewButton.addActionListener(new ActionListener() {
