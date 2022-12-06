@@ -1,6 +1,7 @@
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 
 import net.proteanit.sql.DbUtils;
@@ -15,14 +16,27 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.Color;
 import javax.swing.JTextField;
-import java.awt.GridLayout;
 import javax.swing.SwingConstants;
 
+import java.io.File;
+import java.io.FileInputStream;  
+import java.io.FileNotFoundException;  
+import java.io.IOException;  
+import org.apache.poi.ss.usermodel.Cell;  
+import org.apache.poi.ss.usermodel.*;  
+import org.apache.poi.ss.usermodel.Sheet;  
+import org.apache.poi.ss.usermodel.Workbook;  
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;  
+
+@SuppressWarnings("unused")
 public class MainMenu extends JFrame {
 
 	/**
@@ -47,15 +61,75 @@ public class MainMenu extends JFrame {
 			}
 		});
 	}
-	
-Connection connection = null;
-private JTable InvTable;
+		
+static Connection connection = null; //connection
+static boolean Super = false; //use to keep supervisor permission after first password input
+private JTable InvTable; //tables and text fields
 private JTextField IDNum;
 private JTextField ItemName;
 private JTextField Quant;
 private JTextField Price;
 private JTextField Date;
-private JTextField IDtoRemove;
+private JTextField IDtoRemoveModify;
+private JTextField NewValueField;
+
+//reads the specific cell from the given spreadsheet.
+@SuppressWarnings("deprecation")
+public static String SpreadSheetReadCell(int sRow, int sColumn) {
+	String value=null;         
+	Workbook wb=null; 
+	try {  
+		FileInputStream fis=new FileInputStream(new File("C:\\Users\\dtran\\Desktop\\Demo.xlsx"));
+		wb=new XSSFWorkbook(fis);  
+		
+	}catch(Exception e) {
+		e.printStackTrace();  
+	}
+	
+	Sheet sheet=wb.getSheetAt(0);   
+	Row row = sheet.getRow(sRow); 
+	Cell cell=row.getCell(sColumn);  
+	cell.setCellType(Cell.CELL_TYPE_STRING);
+	value=cell.getStringCellValue();     
+	return value;               
+}
+
+public static void ImportSpreadSheet() {
+	String value=null;         
+	Workbook wb=null; 
+	int entries = 0;
+	try {  
+		FileInputStream fis=new FileInputStream(new File("C:\\Users\\dtran\\Desktop\\Demo.xlsx"));
+		wb=new XSSFWorkbook(fis);  
+		
+		
+	}catch(Exception e) {
+		e.printStackTrace();  
+	}
+	
+	Sheet sheet=wb.getSheetAt(0); 
+	entries = sheet.getLastRowNum();
+	
+	for(int i = 1; i <= entries; i++)
+	{
+		try {
+			String query = "Insert into Inv (IDNumber,ItemName, Quantity, Price, DateAdded) values (?, ?, ?, ?, ?)";
+			PreparedStatement pst = connection.prepareStatement(query);
+			pst.setString(1, SpreadSheetReadCell(i, 0));
+			pst.setString(2, SpreadSheetReadCell(i, 1));
+			pst.setString(3, SpreadSheetReadCell(i, 2));
+			pst.setString(4, SpreadSheetReadCell(i, 3));
+			pst.setString(5, SpreadSheetReadCell(i, 4));
+			pst.execute();	
+			
+		}catch (Exception e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	JOptionPane.showMessageDialog(null, entries + " items added");
+	
+}
 
 	/**
 	 * Create the frame.
@@ -84,27 +158,20 @@ private JTextField IDtoRemove;
 		scrollPane.setBounds(614, 219, -510, -196);
 		ViewInvPanel.add(scrollPane);
 		
-		JButton RefreshButton = new JButton("Refresh");
-		RefreshButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					String query = "select * from Inv";
-					PreparedStatement pst = connection.prepareStatement(query);
-					ResultSet rs = pst.executeQuery();
-					InvTable.setModel(DbUtils.resultSetToTableModel(rs));
-
-					
-				}catch (Exception e1) {
-					e1.printStackTrace();
-				}
-			}
-		});
-		RefreshButton.setBounds(0, 0, 89, 23);
-		ViewInvPanel.add(RefreshButton);
-		
 		InvTable = new JTable();
 		InvTable.setBounds(99, 22, 518, 198);
 		ViewInvPanel.add(InvTable);
+		
+		try {
+			String query = "select * from Inv";
+			PreparedStatement pst = connection.prepareStatement(query);
+			ResultSet rs = pst.executeQuery();
+			InvTable.setModel(DbUtils.resultSetToTableModel(rs));
+
+			
+		}catch (Exception e1) {
+			e1.printStackTrace();
+		}
 		
 		
 		JPanel AddItemPanel = new JPanel();
@@ -164,8 +231,8 @@ private JTextField IDtoRemove;
 		AddItemPanel.add(Date);
 		Date.setColumns(10);
 		
-		JButton btnNewButton = new JButton("Add Item");
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton AddItemButton = new JButton("Add Item");
+		AddItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String query = "Insert into Inv (IDNumber,ItemName, Quantity, Price, DateAdded) values (?, ?, ?, ?, ?)";
@@ -183,30 +250,38 @@ private JTextField IDtoRemove;
 				
 			}
 		});
-		btnNewButton.setBounds(483, 39, 89, 20);
-		AddItemPanel.add(btnNewButton);
+		AddItemButton.setBounds(483, 39, 89, 20);
+		AddItemPanel.add(AddItemButton);
+		
+		JButton btnNewButton_2 = new JButton("New button");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ImportSpreadSheet();
+			}
+		});
+		btnNewButton_2.setBounds(195, 123, 89, 23);
+		AddItemPanel.add(btnNewButton_2);
 		
 		JPanel RemoveItemPanel = new JPanel();
 		layeredPane.add(RemoveItemPanel, "name_1659386861033000");
 		RemoveItemPanel.setLayout(null);
 		
-		JLabel lblNewLabel_1 = new JLabel("ID Number");
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(0, 0, 79, 28);
-		RemoveItemPanel.add(lblNewLabel_1);
+		JLabel IDNumLabel = new JLabel("ID Number");
+		IDNumLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		IDNumLabel.setBounds(0, 0, 79, 28);
+		RemoveItemPanel.add(IDNumLabel);
 		
-		IDtoRemove = new JTextField();
-		IDtoRemove.setBounds(0, 39, 86, 20);
-		RemoveItemPanel.add(IDtoRemove);
-		IDtoRemove.setColumns(10);
+		IDtoRemoveModify = new JTextField();
+		IDtoRemoveModify.setBounds(0, 39, 86, 20);
+		RemoveItemPanel.add(IDtoRemoveModify);
+		IDtoRemoveModify.setColumns(10);
 		
-		JButton btnNewButton_1 = new JButton("Remove");
-		btnNewButton_1.addActionListener(new ActionListener() {
+		JButton RemoveItemButton = new JButton("Remove");
+		RemoveItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String query = "delete from Inv where IDNumber= '"+IDtoRemove.getText()+"' ";
+					String query = "delete from Inv where IDNumber= '"+IDtoRemoveModify.getText()+"' ";
 					PreparedStatement pst = connection.prepareStatement(query);
-					
 					
 					pst.execute();
 					JOptionPane.showMessageDialog(null, "Entry Deleted");
@@ -215,8 +290,69 @@ private JTextField IDtoRemove;
 				}
 			}
 		});
-		btnNewButton_1.setBounds(96, 38, 89, 23);
-		RemoveItemPanel.add(btnNewButton_1);
+		RemoveItemButton.setBounds(528, 38, 89, 23);
+		RemoveItemPanel.add(RemoveItemButton);
+		
+		JComboBox<Object> DataDropdown = new JComboBox<Object>();
+		DataDropdown.setModel(new DefaultComboBoxModel<Object>(new String[] {"Item Name", "Quantity", "Price", "Date Updated"}));
+		DataDropdown.setBounds(96, 38, 86, 22);
+		RemoveItemPanel.add(DataDropdown);
+		
+		
+		JLabel PropertyLabel = new JLabel("Property to Modify");
+		PropertyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		PropertyLabel.setBounds(96, 0, 93, 28);
+		RemoveItemPanel.add(PropertyLabel);
+		
+		NewValueField = new JTextField();
+		NewValueField.setBounds(192, 39, 86, 20);
+		RemoveItemPanel.add(NewValueField);
+		NewValueField.setColumns(10);
+		
+		JLabel NewValueLabel = new JLabel("New Value");
+		NewValueLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		NewValueLabel.setBounds(192, 0, 79, 28);
+		RemoveItemPanel.add(NewValueLabel);
+		
+		JButton ModifyButton = new JButton("Modify");
+		ModifyButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String ToMod = (String) DataDropdown.getSelectedItem();
+				String property = null;
+				
+				switch(ToMod) {
+				case "Item Name":
+					property = "ItemName";
+					break;
+					
+				case "Quantity":
+					property = ToMod;
+					break;
+					
+				case "Price":
+					property = ToMod;
+					break;
+					
+				case "Date Updated":
+					property = "DateAdded";
+					break;
+				}
+				
+				try {
+					String query = "update Inv set " + property + " = '" +  NewValueField.getText() + "' where IDNumber= '"+ IDtoRemoveModify.getText() +"' ";
+					PreparedStatement pst = connection.prepareStatement(query);
+					
+					pst.execute();
+					JOptionPane.showMessageDialog(null, "Entry Updated");
+				}catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				
+				
+			}
+		});
+		ModifyButton.setBounds(288, 38, 89, 23);
+		RemoveItemPanel.add(ModifyButton);
 		
 		JButton ViewButton = new JButton("View Inventory");
 		ViewButton.addActionListener(new ActionListener() {
@@ -225,6 +361,17 @@ private JTextField IDtoRemove;
 				layeredPane.add(ViewInvPanel);
 				layeredPane.repaint();
 				layeredPane.revalidate();
+				
+				try {
+					String query = "select * from Inv";
+					PreparedStatement pst = connection.prepareStatement(query);
+					ResultSet rs = pst.executeQuery();
+					InvTable.setModel(DbUtils.resultSetToTableModel(rs));
+
+					
+				}catch (Exception e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		ViewButton.setBounds(10, 11, 116, 23);
@@ -245,13 +392,43 @@ private JTextField IDtoRemove;
 		JButton RemoveButton = new JButton("Remove Items");
 		RemoveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				layeredPane.removeAll();
-				layeredPane.add(RemoveItemPanel);
-				layeredPane.repaint();
-				layeredPane.revalidate();
-			}
+				if(LoginWindow.Supervisor == true || Super == true) {
+					layeredPane.removeAll();
+					layeredPane.add(RemoveItemPanel);
+					layeredPane.repaint();
+					layeredPane.revalidate();
+				}
+				
+				else {
+					JPasswordField pf = new JPasswordField();
+					JOptionPane.showConfirmDialog(null, pf, "Enter Supervisor Password", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+					try {
+					String query = "select Supervisor from Logins where Password = ?";
+					PreparedStatement pst = connection.prepareStatement(query);
+					
+					String pass = String.valueOf(pf.getPassword());
+					pst.setString(1, new String(pass));
+					
+					ResultSet rs = pst.executeQuery();
+					int S = rs.getInt("Supervisor");
+					
+					if(S == 1) {
+						Super = true;
+						layeredPane.removeAll();
+						layeredPane.add(RemoveItemPanel);
+						layeredPane.repaint();
+						layeredPane.revalidate();
+					}
+					
+					}catch(Exception e2) {
+						}
+					
+					}
+				}
+			
 		});
 		RemoveButton.setBounds(308, 11, 116, 23);
 		contentPane.add(RemoveButton);
+		
 	}
 }

@@ -3,9 +3,17 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
+
+import net.proteanit.sql.DbUtils;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JPasswordField;
 
@@ -15,6 +23,8 @@ public class LoginWindow {
 	private JFrame frame;
 	private JTextField EmpID;
 	private JPasswordField passwordField;
+	static Connection connection = null;
+	static boolean Supervisor = false;
 
 	/**
 	 * Launch the application.
@@ -25,6 +35,7 @@ public class LoginWindow {
 				try {
 					LoginWindow window = new LoginWindow();
 					window.frame.setVisible(true);
+					connection = sqliteConnector.dbConnector();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -52,16 +63,7 @@ public class LoginWindow {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JButton LoginButton = new JButton("Login");
-		LoginButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-				MainMenu mm = new MainMenu();
-				mm.setVisible(true);
-			}
-		});
-		LoginButton.setBounds(130, 180, 89, 23);
-		frame.getContentPane().add(LoginButton);
+		
 		
 		EmpID = new JTextField();
 		EmpID.setBounds(130, 118, 86, 20);
@@ -81,5 +83,53 @@ public class LoginWindow {
 		passwordField = new JPasswordField();
 		passwordField.setBounds(130, 149, 86, 20);
 		frame.getContentPane().add(passwordField);
+		
+		JButton LoginButton = new JButton("Login");
+		LoginButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String query = "select * from Logins where ID = ? and Password = ?";
+					PreparedStatement pst = connection.prepareStatement(query);
+					pst.setString(1, EmpID.getText());
+					pst.setString(2, passwordField.getText());
+					
+					ResultSet rs = pst.executeQuery();
+					int count = 0;
+					while(rs.next()) {
+						count = count + 1;
+						}
+
+					if(count == 1) {
+						query = "select Supervisor from Logins where ID = ?";
+						pst.setString(1, EmpID.getText());
+						
+						rs = pst.executeQuery();
+						int S = rs.getInt("Supervisor");
+						
+						if(S == 1) {
+							Supervisor = true;
+						}
+						
+						frame.dispose();
+						MainMenu mm = new MainMenu();
+						mm.setVisible(true);
+					}
+					
+					else {
+						JOptionPane.showMessageDialog(null, "ID or Password is Incorrect");
+					}
+					
+					rs.close();
+					pst.close();
+					
+				
+				}catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e);
+				}
+				
+			}
+		});
+		LoginButton.setBounds(130, 180, 89, 23);
+		frame.getContentPane().add(LoginButton);
 	}
 }

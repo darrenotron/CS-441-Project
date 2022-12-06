@@ -24,5 +24,10 @@
 	<classpathentry kind="lib" path="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.ui.workbench_3.126.0.v20220823-0718.jar" sourcepath="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.ui.workbench_3.126.0.v20220823-0718.jar"/>
 	<classpathentry kind="lib" path="C:/Users/dtran/Desktop/eclipse/plugins/com.ibm.icu_67.1.0.jar" sourcepath="C:/Users/dtran/Desktop/eclipse/plugins/com.ibm.icu_67.1.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.ui.forms_3.11.400.v20220817-1444.jar" sourcepath="C:/Users/dtran/Desktop/eclipse/plugins/org.eclipse.ui.forms_3.11.400.v20220817-1444.jar"/>
+	<classpathentry kind="lib" path="C:/Users/dtran/Downloads/poi-ooxml-schemas-3.17.jar"/>
+	<classpathentry kind="lib" path="C:/Users/dtran/Downloads/xmlbeans-2.6.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/dtran/Downloads/poi-3.17.jar"/>
+	<classpathentry kind="lib" path="C:/Users/dtran/Downloads/poi-ooxml-3.17.jar"/>
+	<classpathentry kind="lib" path="C:/Users/dtran/Downloads/commons-collections4-4.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
