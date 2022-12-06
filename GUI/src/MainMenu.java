@@ -79,35 +79,36 @@ private JTextField Date;
 private JTextField IDtoRemoveModify;
 private JTextField NewValueField;
 
-JFileChooser chooser;
-String sourceFolder = "";
-String theFile  ="";
-static String SpreadSheetPath = "";
+JFileChooser chooser; //file explorer
+String sourceFolder = ""; //location of file
+String theFile  =""; //file name
+static String SpreadSheetPath = ""; //path to spreadsheet to be used, global
 
+//user uses file explorer to select spreadsheet they want to import
 public void GetSpreadSheet()
 {
-	chooser = new JFileChooser();
-	chooser.setCurrentDirectory(new java.io.File("C:\\Users\\dtran\\Desktop"));
+	chooser = new JFileChooser(); //file chooser
+	chooser.setCurrentDirectory(new java.io.File("C:\\Users\\dtran\\Desktop")); //default to desktop for ease of use
 	FileNameExtensionFilter filter = new FileNameExtensionFilter(
-	        "Spreadsheets", "xlsx");
+	        "Spreadsheets", "xlsx"); //filter by xl files 
 	     chooser.setFileFilter(filter);
-	     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+	     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY); //show file explorer
 	   
-	     if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
+	     if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { //when approved file selected
 	         
-	         String dirr = "" + chooser.getCurrentDirectory();
-	         File file = chooser.getSelectedFile();
+	         String dirr = "" + chooser.getCurrentDirectory(); //get directory of file
+	         File file = chooser.getSelectedFile(); //get file name
 	     
 	       
-	      if(dirr.substring(dirr.length()-1,dirr.length()).equals(".")){
+	      if(dirr.substring(dirr.length()-1,dirr.length()).equals(".")){ //in case of current directory fix period
 	           dirr = dirr.substring(0,dirr.length()-1);
 	           sourceFolder=""+dirr + "" + file.getName();
 	        }else{
 	            
-	            sourceFolder=""+dirr + "/" + file.getName();
+	            sourceFolder=""+dirr + "/" + file.getName(); //get source folder
 	        }
 
-	          SpreadSheetPath = dirr + "\\" + file.getName();
+	          SpreadSheetPath = dirr + "\\" + file.getName(); //assign spreadsheet location to global variable
 	     }
 	          
 }
@@ -116,33 +117,33 @@ public void GetSpreadSheet()
 
 
 
-//reads the specific cell from the given spreadsheet.
+//reads the specific cell from the given spreadsheet. returns value of cell in chosen locations
 @SuppressWarnings("deprecation")
 public static String SpreadSheetReadCell(int sRow, int sColumn) {
 	String value=null;         
 	Workbook wb=null; 
 	try {  
-		FileInputStream fis=new FileInputStream(new File(SpreadSheetPath));
-		wb=new XSSFWorkbook(fis);  
+		FileInputStream fis=new FileInputStream(new File(SpreadSheetPath)); //use assigned path to find file
+		wb=new XSSFWorkbook(fis);  //declare workbook to work with file
 		
 	}catch(Exception e) {
 		e.printStackTrace();  
 	}
 	
-	Sheet sheet=wb.getSheetAt(0);   
-	Row row = sheet.getRow(sRow); 
-	Cell cell=row.getCell(sColumn);  
-	cell.setCellType(Cell.CELL_TYPE_STRING);
-	value=cell.getStringCellValue();     
-	return value;               
+	Sheet sheet=wb.getSheetAt(0);   //get sheet
+	Row row = sheet.getRow(sRow); //get specific row
+	Cell cell=row.getCell(sColumn);  //get specific column
+	cell.setCellType(Cell.CELL_TYPE_STRING); //set cell type to string to fix input
+	value=cell.getStringCellValue();      //get value
+	return value;               //return value
 }
 
-public static void ImportSpreadSheet() {
+public static void ImportSpreadSheet() { //import spreadsheet data row by row
 	String value=null;         
 	Workbook wb=null; 
 	int entries = 0;
 	try {  
-		FileInputStream fis=new FileInputStream(new File(SpreadSheetPath));
+		FileInputStream fis=new FileInputStream(new File(SpreadSheetPath)); //get spreadsheet path
 		wb=new XSSFWorkbook(fis);  
 		
 		
@@ -150,19 +151,19 @@ public static void ImportSpreadSheet() {
 		e.printStackTrace();  
 	}
 	
-	Sheet sheet=wb.getSheetAt(0); 
-	entries = sheet.getLastRowNum();
+	Sheet sheet=wb.getSheetAt(0); //get sheet
+	entries = sheet.getLastRowNum(); //get row count, accounts for title row on 0
 	
-	for(int i = 1; i <= entries; i++)
+	for(int i = 1; i <= entries; i++) //go through each line
 	{
 		try {
-			String query = "Insert into Inv (IDNumber,ItemName, Quantity, Price, DateAdded) values (?, ?, ?, ?, ?)";
+			String query = "Insert into Inv (IDNumber,ItemName, Quantity, Price, DateAdded) values (?, ?, ?, ?, ?)"; //insert into sql table
 			PreparedStatement pst = connection.prepareStatement(query);
-			pst.setString(1, SpreadSheetReadCell(i, 0));
-			pst.setString(2, SpreadSheetReadCell(i, 1));
-			pst.setString(3, SpreadSheetReadCell(i, 2));
-			pst.setString(4, SpreadSheetReadCell(i, 3));
-			pst.setString(5, SpreadSheetReadCell(i, 4));
+			pst.setString(1, SpreadSheetReadCell(i, 0)); //id num
+			pst.setString(2, SpreadSheetReadCell(i, 1)); //name
+			pst.setString(3, SpreadSheetReadCell(i, 2)); //quant
+			pst.setString(4, SpreadSheetReadCell(i, 3)); //price
+			pst.setString(5, SpreadSheetReadCell(i, 4)); //date
 			pst.execute();	
 			
 		}catch (Exception e1) {
@@ -170,7 +171,7 @@ public static void ImportSpreadSheet() {
 		}
 	}
 	
-	JOptionPane.showMessageDialog(null, entries + " items added");
+	JOptionPane.showMessageDialog(null, entries + " items added"); //tell user how many items added
 	
 }
 
@@ -178,7 +179,7 @@ public static void ImportSpreadSheet() {
 	 * Create the frame.
 	 */
 	public MainMenu() {
-		connection = sqliteConnector.dbConnector();
+		connection = sqliteConnector.dbConnector(); //connect to database
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 663, 350);
 		contentPane = new JPanel();
@@ -205,7 +206,7 @@ public static void ImportSpreadSheet() {
 		InvTable.setBounds(99, 22, 518, 198);
 		ViewInvPanel.add(InvTable);
 		
-		try {
+		try { //display table for first time
 			String query = "select * from Inv";
 			PreparedStatement pst = connection.prepareStatement(query);
 			ResultSet rs = pst.executeQuery();
@@ -278,7 +279,7 @@ public static void ImportSpreadSheet() {
 		AddItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String query = "Insert into Inv (IDNumber,ItemName, Quantity, Price, DateAdded) values (?, ?, ?, ?, ?)";
+					String query = "Insert into Inv (IDNumber,ItemName, Quantity, Price, DateAdded) values (?, ?, ?, ?, ?)"; //add item to table with given values
 					PreparedStatement pst = connection.prepareStatement(query);
 					pst.setString(1, IDNum.getText());
 					pst.setString(2, ItemName.getText());
@@ -297,7 +298,7 @@ public static void ImportSpreadSheet() {
 		AddItemPanel.add(AddItemButton);
 		
 		JButton ChooseFileButton = new JButton("Choose File");
-		ChooseFileButton.addActionListener(new ActionListener() {
+		ChooseFileButton.addActionListener(new ActionListener() { //choose xl file then import contents
 			public void actionPerformed(ActionEvent e) {
 				GetSpreadSheet();
 				ImportSpreadSheet();
@@ -324,7 +325,7 @@ public static void ImportSpreadSheet() {
 		RemoveItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String query = "delete from Inv where IDNumber= '"+IDtoRemoveModify.getText()+"' ";
+					String query = "delete from Inv where IDNumber= '"+IDtoRemoveModify.getText()+"' "; //remove item with typed id
 					PreparedStatement pst = connection.prepareStatement(query);
 					
 					pst.execute();
@@ -338,7 +339,7 @@ public static void ImportSpreadSheet() {
 		RemoveItemPanel.add(RemoveItemButton);
 		
 		JComboBox<Object> DataDropdown = new JComboBox<Object>();
-		DataDropdown.setModel(new DefaultComboBoxModel<Object>(new String[] {"Item Name", "Quantity", "Price", "Date Updated"}));
+		DataDropdown.setModel(new DefaultComboBoxModel<Object>(new String[] {"Item Name", "Quantity", "Price", "Date Updated"})); //box selector for property to modify
 		DataDropdown.setBounds(96, 38, 86, 22);
 		RemoveItemPanel.add(DataDropdown);
 		
@@ -358,7 +359,7 @@ public static void ImportSpreadSheet() {
 		NewValueLabel.setBounds(192, 0, 79, 28);
 		RemoveItemPanel.add(NewValueLabel);
 		
-		JButton ModifyButton = new JButton("Modify");
+		JButton ModifyButton = new JButton("Modify"); //when pressing modify button, gets value from dropdown box to choose type then makes modification from entered value
 		ModifyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String ToMod = (String) DataDropdown.getSelectedItem();
@@ -407,7 +408,7 @@ public static void ImportSpreadSheet() {
 				layeredPane.revalidate();
 				
 				try {
-					String query = "select * from Inv";
+					String query = "select * from Inv"; //print table
 					PreparedStatement pst = connection.prepareStatement(query);
 					ResultSet rs = pst.executeQuery();
 					InvTable.setModel(DbUtils.resultSetToTableModel(rs));
@@ -436,7 +437,7 @@ public static void ImportSpreadSheet() {
 		JButton RemoveButton = new JButton("Remove Items");
 		RemoveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(LoginWindow.Supervisor == true || Super == true) {
+				if(LoginWindow.Supervisor == true || Super == true) {//if user is supervisor or already got password, no need to ask
 					layeredPane.removeAll();
 					layeredPane.add(RemoveItemPanel);
 					layeredPane.repaint();
@@ -444,7 +445,7 @@ public static void ImportSpreadSheet() {
 				}
 				
 				else {
-					JPasswordField pf = new JPasswordField();
+					JPasswordField pf = new JPasswordField(); //get supervisor password 
 					JOptionPane.showConfirmDialog(null, pf, "Enter Supervisor Password", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 					try {
 					String query = "select Supervisor from Logins where Password = ?";
@@ -456,12 +457,16 @@ public static void ImportSpreadSheet() {
 					ResultSet rs = pst.executeQuery();
 					int S = rs.getInt("Supervisor");
 					
-					if(S == 1) {
+					if(S == 1) { //only works if password is supervisor
 						Super = true;
 						layeredPane.removeAll();
 						layeredPane.add(RemoveItemPanel);
 						layeredPane.repaint();
 						layeredPane.revalidate();
+					}
+					
+					else {
+						JOptionPane.showMessageDialog(null, "Password Incorrect");
 					}
 					
 					}catch(Exception e2) {
