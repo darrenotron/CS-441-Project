@@ -12,6 +12,12 @@ import javax.swing.JOptionPane;
 import java.awt.CardLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.*;
+import java.util.*;
+import javax.swing.filechooser.*;
+import java.io.*;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -73,13 +79,50 @@ private JTextField Date;
 private JTextField IDtoRemoveModify;
 private JTextField NewValueField;
 
+JFileChooser chooser;
+String sourceFolder = "";
+String theFile  ="";
+static String SpreadSheetPath = "";
+
+public void GetSpreadSheet()
+{
+	chooser = new JFileChooser();
+	chooser.setCurrentDirectory(new java.io.File("C:\\Users\\dtran\\Desktop"));
+	FileNameExtensionFilter filter = new FileNameExtensionFilter(
+	        "Spreadsheets", "xlsx");
+	     chooser.setFileFilter(filter);
+	     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+	   
+	     if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
+	         
+	         String dirr = "" + chooser.getCurrentDirectory();
+	         File file = chooser.getSelectedFile();
+	     
+	       
+	      if(dirr.substring(dirr.length()-1,dirr.length()).equals(".")){
+	           dirr = dirr.substring(0,dirr.length()-1);
+	           sourceFolder=""+dirr + "" + file.getName();
+	        }else{
+	            
+	            sourceFolder=""+dirr + "/" + file.getName();
+	        }
+
+	          SpreadSheetPath = dirr + "\\" + file.getName();
+	     }
+	          
+}
+
+
+
+
+
 //reads the specific cell from the given spreadsheet.
 @SuppressWarnings("deprecation")
 public static String SpreadSheetReadCell(int sRow, int sColumn) {
 	String value=null;         
 	Workbook wb=null; 
 	try {  
-		FileInputStream fis=new FileInputStream(new File("C:\\Users\\dtran\\Desktop\\Demo.xlsx"));
+		FileInputStream fis=new FileInputStream(new File(SpreadSheetPath));
 		wb=new XSSFWorkbook(fis);  
 		
 	}catch(Exception e) {
@@ -99,7 +142,7 @@ public static void ImportSpreadSheet() {
 	Workbook wb=null; 
 	int entries = 0;
 	try {  
-		FileInputStream fis=new FileInputStream(new File("C:\\Users\\dtran\\Desktop\\Demo.xlsx"));
+		FileInputStream fis=new FileInputStream(new File(SpreadSheetPath));
 		wb=new XSSFWorkbook(fis);  
 		
 		
@@ -253,14 +296,15 @@ public static void ImportSpreadSheet() {
 		AddItemButton.setBounds(483, 39, 89, 20);
 		AddItemPanel.add(AddItemButton);
 		
-		JButton btnNewButton_2 = new JButton("New button");
-		btnNewButton_2.addActionListener(new ActionListener() {
+		JButton ChooseFileButton = new JButton("Choose File");
+		ChooseFileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				GetSpreadSheet();
 				ImportSpreadSheet();
 			}
 		});
-		btnNewButton_2.setBounds(195, 123, 89, 23);
-		AddItemPanel.add(btnNewButton_2);
+		ChooseFileButton.setBounds(232, 149, 89, 23);
+		AddItemPanel.add(ChooseFileButton);
 		
 		JPanel RemoveItemPanel = new JPanel();
 		layeredPane.add(RemoveItemPanel, "name_1659386861033000");
