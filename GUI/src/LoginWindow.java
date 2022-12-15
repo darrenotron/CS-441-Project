@@ -1,6 +1,7 @@
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -15,12 +16,16 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
+import java.awt.Image;
+
 import javax.swing.JPasswordField;
+import java.awt.Color;
+import java.awt.Toolkit;
 
 public class LoginWindow {
 
 	
-	private JFrame frame;
+	private JFrame frmInventoryManagementSystem;
 	private JTextField EmpID;
 	private JPasswordField passwordField;
 	static Connection connection = null;
@@ -34,10 +39,11 @@ public class LoginWindow {
 			public void run() {
 				try {
 					LoginWindow window = new LoginWindow();
-					window.frame.setVisible(true);
+					window.frmInventoryManagementSystem.setVisible(true);
 					connection = sqliteConnector.dbConnector();
 				} catch (Exception e) {
 					e.printStackTrace();
+					
 				}
 			}
 		});
@@ -58,31 +64,34 @@ public class LoginWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 663, 350);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frmInventoryManagementSystem = new JFrame();
+		frmInventoryManagementSystem.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\dtran\\Desktop\\USU logo.jpg"));
+		frmInventoryManagementSystem.setTitle("Inventory Management System");
+		frmInventoryManagementSystem.getContentPane().setBackground(new Color(255, 255, 255));
+		frmInventoryManagementSystem.setBounds(100, 100, 663, 350);
+		frmInventoryManagementSystem.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmInventoryManagementSystem.getContentPane().setLayout(null);
 		
 		
 		
 		EmpID = new JTextField();
-		EmpID.setBounds(130, 118, 86, 20);
-		frame.getContentPane().add(EmpID);
+		EmpID.setBounds(130, 118, 89, 20);
+		frmInventoryManagementSystem.getContentPane().add(EmpID);
 		EmpID.setColumns(10);
 		
 		JLabel EmpIDText = new JLabel("Employee ID");
 		EmpIDText.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		EmpIDText.setBounds(10, 112, 110, 29);
-		frame.getContentPane().add(EmpIDText);
+		frmInventoryManagementSystem.getContentPane().add(EmpIDText);
 		
 		JLabel PasswdText = new JLabel("Password");
 		PasswdText.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		PasswdText.setBounds(10, 152, 110, 29);
-		frame.getContentPane().add(PasswdText);
+		frmInventoryManagementSystem.getContentPane().add(PasswdText);
 		
 		passwordField = new JPasswordField();
-		passwordField.setBounds(130, 149, 86, 20);
-		frame.getContentPane().add(passwordField);
+		passwordField.setBounds(130, 149, 89, 20);
+		frmInventoryManagementSystem.getContentPane().add(passwordField);
 		
 		JButton LoginButton = new JButton("Login");
 		LoginButton.addActionListener(new ActionListener() {
@@ -110,7 +119,7 @@ public class LoginWindow {
 							Supervisor = true;
 						}
 						
-						frame.dispose();
+						frmInventoryManagementSystem.dispose();
 						MainMenu mm = new MainMenu();
 						mm.setVisible(true);
 					}
@@ -129,7 +138,13 @@ public class LoginWindow {
 				
 			}
 		});
-		LoginButton.setBounds(130, 180, 89, 23);
-		frame.getContentPane().add(LoginButton);
+		LoginButton.setBounds(130, 181, 89, 23);
+		frmInventoryManagementSystem.getContentPane().add(LoginButton);
+		
+		JLabel Logo = new JLabel("");
+		Image img= new ImageIcon(this.getClass().getResource("/USU logo.jpg")).getImage();
+		Logo.setIcon(new ImageIcon(img));
+		Logo.setBounds(320, 27, 248, 258);
+		frmInventoryManagementSystem.getContentPane().add(Logo);
 	}
 }

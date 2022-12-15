@@ -1,4 +1,3 @@
-import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -8,8 +7,6 @@ import net.proteanit.sql.DbUtils;
 
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
-
-import java.awt.CardLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.*;
@@ -27,6 +24,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.Color;
+import java.awt.Font;
+
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -114,9 +113,6 @@ public void GetSpreadSheet()
 }
 
 
-
-
-
 //reads the specific cell from the given spreadsheet. returns value of cell in chosen locations
 @SuppressWarnings("deprecation")
 public static String SpreadSheetReadCell(int sRow, int sColumn) {
@@ -179,10 +175,13 @@ public static void ImportSpreadSheet() { //import spreadsheet data row by row
 	 * Create the frame.
 	 */
 	public MainMenu() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\dtran\\Desktop\\USU logo.jpg"));
+		setTitle("Inventory Management System");
 		connection = sqliteConnector.dbConnector(); //connect to database
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 663, 350);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(0, 128, 192));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
@@ -194,22 +193,22 @@ public static void ImportSpreadSheet() { //import spreadsheet data row by row
 		layeredPane.setLayout(new CardLayout(0, 0));
 		
 		JPanel ViewInvPanel = new JPanel();
+		ViewInvPanel.setBackground(new Color(255, 255, 255));
 		layeredPane.setLayer(ViewInvPanel, -1);
 		layeredPane.add(ViewInvPanel, "name_1659376283470600");
 		ViewInvPanel.setLayout(null);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(614, 219, -510, -196);
-		ViewInvPanel.add(scrollPane);
-		
-		InvTable = new JTable();
-		InvTable.setBounds(99, 22, 518, 198);
-		ViewInvPanel.add(InvTable);
 		
 		try { //display table for first time
 			String query = "select * from Inv";
 			PreparedStatement pst = connection.prepareStatement(query);
 			ResultSet rs = pst.executeQuery();
+			
+			JScrollPane scrollPane = new JScrollPane();
+			scrollPane.setBounds(0, 0, 627, 231);
+			ViewInvPanel.add(scrollPane);
+			
+			InvTable = new JTable();
+			scrollPane.setViewportView(InvTable);
 			InvTable.setModel(DbUtils.resultSetToTableModel(rs));
 
 			
@@ -219,63 +218,70 @@ public static void ImportSpreadSheet() { //import spreadsheet data row by row
 		
 		
 		JPanel AddItemPanel = new JPanel();
+		AddItemPanel.setBackground(new Color(255, 255, 255));
 		layeredPane.add(AddItemPanel, "name_1659379628347400");
 		AddItemPanel.setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("ID Number");
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblNewLabel.setForeground(new Color(0, 0, 0));
 		lblNewLabel.setBackground(new Color(255, 255, 255));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(0, 0, 79, 28);
+		lblNewLabel.setBounds(10, 11, 79, 28);
 		AddItemPanel.add(lblNewLabel);
 		
 		JLabel lblNewLabel_2 = new JLabel("Item Name");
+		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_2.setBounds(99, 0, 79, 28);
+		lblNewLabel_2.setBounds(109, 11, 79, 28);
 		AddItemPanel.add(lblNewLabel_2);
 		
 		JLabel lblNewLabel_3 = new JLabel("Quantity");
+		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblNewLabel_3.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_3.setBounds(195, 0, 79, 28);
+		lblNewLabel_3.setBounds(205, 11, 79, 28);
 		AddItemPanel.add(lblNewLabel_3);
 		
 		JLabel lblNewLabel_4 = new JLabel("Price");
+		lblNewLabel_4.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblNewLabel_4.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_4.setBounds(291, 0, 79, 28);
+		lblNewLabel_4.setBounds(301, 11, 79, 28);
 		AddItemPanel.add(lblNewLabel_4);
 		
 		JLabel lblNewLabel_5 = new JLabel("Date Added");
+		lblNewLabel_5.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblNewLabel_5.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_5.setBounds(387, 0, 79, 28);
+		lblNewLabel_5.setBounds(397, 11, 79, 28);
 		AddItemPanel.add(lblNewLabel_5);
 		
 		IDNum = new JTextField();
 		IDNum.setHorizontalAlignment(SwingConstants.LEFT);
-		IDNum.setBounds(0, 39, 86, 20);
+		IDNum.setBounds(10, 50, 86, 20);
 		AddItemPanel.add(IDNum);
 		IDNum.setColumns(10);
 		
 		ItemName = new JTextField();
-		ItemName.setBounds(99, 39, 86, 20);
+		ItemName.setBounds(109, 50, 86, 20);
 		AddItemPanel.add(ItemName);
 		ItemName.setColumns(10);
 		
 		Quant = new JTextField();
-		Quant.setBounds(195, 39, 86, 20);
+		Quant.setBounds(205, 50, 86, 20);
 		AddItemPanel.add(Quant);
 		Quant.setColumns(10);
 		
 		Price = new JTextField();
-		Price.setBounds(291, 39, 86, 20);
+		Price.setBounds(301, 50, 86, 20);
 		AddItemPanel.add(Price);
 		Price.setColumns(10);
 		
 		Date = new JTextField();
-		Date.setBounds(387, 39, 86, 20);
+		Date.setBounds(397, 50, 86, 20);
 		AddItemPanel.add(Date);
 		Date.setColumns(10);
 		
 		JButton AddItemButton = new JButton("Add Item");
+		AddItemButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		AddItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -294,30 +300,38 @@ public static void ImportSpreadSheet() { //import spreadsheet data row by row
 				
 			}
 		});
-		AddItemButton.setBounds(483, 39, 89, 20);
+		AddItemButton.setBounds(493, 50, 89, 20);
 		AddItemPanel.add(AddItemButton);
 		
-		JButton ChooseFileButton = new JButton("Choose File");
+		JButton ChooseFileButton = new JButton("");
+		ChooseFileButton.setIcon(new ImageIcon("C:\\Users\\dtran\\Downloads\\ImportImage.png"));
 		ChooseFileButton.addActionListener(new ActionListener() { //choose xl file then import contents
 			public void actionPerformed(ActionEvent e) {
 				GetSpreadSheet();
 				ImportSpreadSheet();
 			}
 		});
-		ChooseFileButton.setBounds(232, 149, 89, 23);
+		ChooseFileButton.setBounds(253, 141, 101, 79);
 		AddItemPanel.add(ChooseFileButton);
 		
+		JLabel lblNewLabel_1 = new JLabel("Import Spreadsheet");
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblNewLabel_1.setBounds(250, 102, 115, 28);
+		AddItemPanel.add(lblNewLabel_1);
+		
 		JPanel RemoveItemPanel = new JPanel();
+		RemoveItemPanel.setBackground(new Color(255, 255, 255));
 		layeredPane.add(RemoveItemPanel, "name_1659386861033000");
 		RemoveItemPanel.setLayout(null);
 		
 		JLabel IDNumLabel = new JLabel("ID Number");
+		IDNumLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
 		IDNumLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		IDNumLabel.setBounds(0, 0, 79, 28);
+		IDNumLabel.setBounds(10, 0, 113, 28);
 		RemoveItemPanel.add(IDNumLabel);
 		
 		IDtoRemoveModify = new JTextField();
-		IDtoRemoveModify.setBounds(0, 39, 86, 20);
+		IDtoRemoveModify.setBounds(10, 39, 113, 20);
 		RemoveItemPanel.add(IDtoRemoveModify);
 		IDtoRemoveModify.setColumns(10);
 		
@@ -335,28 +349,30 @@ public static void ImportSpreadSheet() { //import spreadsheet data row by row
 				}
 			}
 		});
-		RemoveItemButton.setBounds(528, 38, 89, 23);
+		RemoveItemButton.setBounds(502, 38, 113, 23);
 		RemoveItemPanel.add(RemoveItemButton);
 		
 		JComboBox<Object> DataDropdown = new JComboBox<Object>();
 		DataDropdown.setModel(new DefaultComboBoxModel<Object>(new String[] {"Item Name", "Quantity", "Price", "Date Updated"})); //box selector for property to modify
-		DataDropdown.setBounds(96, 38, 86, 22);
+		DataDropdown.setBounds(133, 38, 113, 22);
 		RemoveItemPanel.add(DataDropdown);
 		
 		
 		JLabel PropertyLabel = new JLabel("Property to Modify");
+		PropertyLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
 		PropertyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		PropertyLabel.setBounds(96, 0, 93, 28);
+		PropertyLabel.setBounds(133, 0, 113, 28);
 		RemoveItemPanel.add(PropertyLabel);
 		
 		NewValueField = new JTextField();
-		NewValueField.setBounds(192, 39, 86, 20);
+		NewValueField.setBounds(256, 39, 113, 20);
 		RemoveItemPanel.add(NewValueField);
 		NewValueField.setColumns(10);
 		
 		JLabel NewValueLabel = new JLabel("New Value");
+		NewValueLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
 		NewValueLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		NewValueLabel.setBounds(192, 0, 79, 28);
+		NewValueLabel.setBounds(256, 0, 113, 28);
 		RemoveItemPanel.add(NewValueLabel);
 		
 		JButton ModifyButton = new JButton("Modify"); //when pressing modify button, gets value from dropdown box to choose type then makes modification from entered value
@@ -396,10 +412,11 @@ public static void ImportSpreadSheet() { //import spreadsheet data row by row
 				
 			}
 		});
-		ModifyButton.setBounds(288, 38, 89, 23);
+		ModifyButton.setBounds(379, 38, 113, 23);
 		RemoveItemPanel.add(ModifyButton);
 		
 		JButton ViewButton = new JButton("View Inventory");
+		ViewButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		ViewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				layeredPane.removeAll();
@@ -419,10 +436,11 @@ public static void ImportSpreadSheet() { //import spreadsheet data row by row
 				}
 			}
 		});
-		ViewButton.setBounds(10, 11, 116, 23);
+		ViewButton.setBounds(10, 11, 202, 23);
 		contentPane.add(ViewButton);
 		
 		JButton AddButton = new JButton("Add Items");
+		AddButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		AddButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				layeredPane.removeAll();
@@ -431,10 +449,11 @@ public static void ImportSpreadSheet() { //import spreadsheet data row by row
 				layeredPane.revalidate();
 			}
 		});
-		AddButton.setBounds(160, 11, 116, 23);
+		AddButton.setBounds(222, 11, 203, 23);
 		contentPane.add(AddButton);
 		
-		JButton RemoveButton = new JButton("Remove Items");
+		JButton RemoveButton = new JButton("Remove / Modify");
+		RemoveButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		RemoveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(LoginWindow.Supervisor == true || Super == true) {//if user is supervisor or already got password, no need to ask
@@ -476,7 +495,7 @@ public static void ImportSpreadSheet() { //import spreadsheet data row by row
 				}
 			
 		});
-		RemoveButton.setBounds(308, 11, 116, 23);
+		RemoveButton.setBounds(435, 11, 202, 23);
 		contentPane.add(RemoveButton);
 		
 	}
